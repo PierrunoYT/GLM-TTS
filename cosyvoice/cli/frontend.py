@@ -140,13 +140,8 @@ class TextFrontEnd:
             self.frd.enable_pinyin_mix(True)
             self.frd.set_breakmodel_index(1)
         else:
-            self.zh_tn_model = ZhNormalizer(
-                remove_erhua=False,
-                full_to_half=True,
-                remove_interjections=False,
-                overwrite_cache=True
-            )
-            self.en_tn_model = EnNormalizer()
+            self.zh_tn_model = ZhNormalizer(lang="zh")
+            self.en_tn_model = EnNormalizer(lang="en")
 
         self.use_phoneme = use_phoneme
         if self.use_phoneme:
