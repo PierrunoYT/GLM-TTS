@@ -41,9 +41,9 @@ try:
     import ttsfrd
     use_ttsfrd = True
 except ImportError:
-    print("Warning: failed to import ttsfrd, use WeTextProcessing instead")
-    from tn.chinese.normalizer import Normalizer as ZhNormalizer
-    from tn.english.normalizer import Normalizer as EnNormalizer
+    print("Warning: failed to import ttsfrd, use wetext instead")
+    from wetext import Normalizer as ZhNormalizer
+    from wetext import Normalizer as EnNormalizer
     use_ttsfrd = False
 
 

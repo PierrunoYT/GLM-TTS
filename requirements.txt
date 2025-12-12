@@ -3,14 +3,12 @@ scipy==1.15.3
 sentencepiece==0.1.99
 soundfile==0.12.1
 tiktoken==0.6.0
-torch==2.3.1
-torchaudio==2.3.1
-torchvision==0.18.1
+
 tqdm==4.66.4
 train==0.0.5
 transformers==4.57.3
 wandb==0.16.6
-WeTextProcessing==1.0.3
+wetext
 x_transformers==1.42.26
 zhconv==1.4.3
 zhon==2.1.1
