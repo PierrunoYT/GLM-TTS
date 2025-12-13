@@ -383,7 +383,7 @@ def jsonl_generate(
 
 def load_models(use_phoneme=False, sample_rate=24000):
     # Load Speech Tokenizer
-    speech_tokenizer_path = os.path.join("ckpt", "speech_tokenizer")
+    speech_tokenizer_path = os.path.join("ckpt", "speech_tokenizer").replace("\\", "/")
     _model, _feature_extractor = yaml_util.load_speech_tokenizer(
         speech_tokenizer_path
     )
@@ -392,10 +392,10 @@ def load_models(use_phoneme=False, sample_rate=24000):
     # Load Frontends
     frontend, text_frontend = load_frontends(speech_tokenizer, sample_rate=sample_rate, use_phoneme=use_phoneme)
 
-    llama_path = os.path.join("ckpt", "llm")
+    llama_path = os.path.join("ckpt", "llm").replace("\\", "/")
 
     llm = GLMTTS(
-        llama_cfg_path=os.path.join(llama_path, "config.json"), mode="PRETRAIN"
+        llama_cfg_path=os.path.join(llama_path, "config.json").replace("\\", "/"), mode="PRETRAIN"
     )
     llm.llama = LlamaForCausalLM.from_pretrained(
         llama_path, dtype=torch.float32
@@ -406,8 +406,8 @@ def load_models(use_phoneme=False, sample_rate=24000):
     special_token_ids = get_special_token_ids(frontend.tokenize_fn)
     llm.set_runtime_vars(special_token_ids=special_token_ids)
 
-    flow_ckpt = os.path.join("ckpt", "flow", "flow.pt")
-    flow_config = os.path.join("ckpt", "flow", "config.yaml")
+    flow_ckpt = os.path.join("ckpt", "flow", "flow.pt").replace("\\", "/")
+    flow_config = os.path.join("ckpt", "flow", "config.yaml").replace("\\", "/")
     flow = yaml_util.load_flow_model(
         flow_ckpt, flow_config, DEVICE
     )
