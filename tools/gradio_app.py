@@ -157,7 +157,7 @@ def clear_memory():
 
 # --- Gradio UI Layout ---
 
-with gr.Blocks(title="GLMTTS Inference") as app:
+with gr.Blocks(title="GLMTTS Inference", theme=gr.themes.Soft()) as app:
     gr.Markdown("# 🎵 GLMTTS Open Source Demo")
     gr.Markdown("Zero-shot text-to-speech generation using GLMTTS models.")
 
@@ -222,6 +222,5 @@ if __name__ == "__main__":
     app.queue().launch(
         server_name="0.0.0.0", 
         server_port=8048, 
-        theme=gr.themes.Soft(),
         share=False
     )
