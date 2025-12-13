@@ -88,18 +88,22 @@ def load_frontends(speech_tokenizer, sample_rate=24000, use_phoneme=False, front
     else:
         raise ValueError(f"Unsupported sampling_rate: {sample_rate}")
 
+    # Resolve tokenizer path relative to script directory
+    tokenizer_path = os.path.join(CURRENT_DIR, 'ckpt', 'vq32k-phoneme-tokenizer')
     glm_tokenizer = AutoTokenizer.from_pretrained(
-        os.path.join('ckpt', 'vq32k-phoneme-tokenizer'), trust_remote_code=True
+        tokenizer_path, trust_remote_code=True
     )
 
     tokenize_fn = lambda text: glm_tokenizer.encode(text)
 
+    # Resolve frontend file paths relative to script directory
+    frontend_path = os.path.join(CURRENT_DIR, frontend_dir)
     frontend = TTSFrontEnd(
         tokenize_fn,
         speech_tokenizer,
         feat_extractor,
-        os.path.join(frontend_dir, "campplus.onnx"),
-        os.path.join(frontend_dir, "spk2info.pt"),
+        os.path.join(frontend_path, "campplus.onnx"),
+        os.path.join(frontend_path, "spk2info.pt"),
         DEVICE,
     )
     text_frontend = TextFrontEnd(use_phoneme)
@@ -305,7 +309,7 @@ def jsonl_generate(
     data_name, folder_path, sample_rate=24000, seed=0, use_cache=True, use_phoneme=False
 ):
     # Dataset path resolution
-    jsonl_path = os.path.join("examples", data_name + ".jsonl")
+    jsonl_path = os.path.join(CURRENT_DIR, "examples", data_name + ".jsonl")
 
     logging.info(f"Using jsonl: {jsonl_path}")
     item_list = file_utils.get_jsonl(jsonl_path)
@@ -382,8 +386,11 @@ def jsonl_generate(
 
 
 def load_models(use_phoneme=False, sample_rate=24000):
+    # Resolve paths relative to script directory
+    base_ckpt_dir = os.path.join(CURRENT_DIR, "ckpt")
+    
     # Load Speech Tokenizer
-    speech_tokenizer_path = os.path.join("ckpt", "speech_tokenizer").replace("\\", "/")
+    speech_tokenizer_path = os.path.join(base_ckpt_dir, "speech_tokenizer")
     _model, _feature_extractor = yaml_util.load_speech_tokenizer(
         speech_tokenizer_path
     )
@@ -392,10 +399,10 @@ def load_models(use_phoneme=False, sample_rate=24000):
     # Load Frontends
     frontend, text_frontend = load_frontends(speech_tokenizer, sample_rate=sample_rate, use_phoneme=use_phoneme)
 
-    llama_path = os.path.join("ckpt", "llm").replace("\\", "/")
+    llama_path = os.path.join(base_ckpt_dir, "llm")
 
     llm = GLMTTS(
-        llama_cfg_path=os.path.join(llama_path, "config.json").replace("\\", "/"), mode="PRETRAIN"
+        llama_cfg_path=os.path.join(llama_path, "config.json"), mode="PRETRAIN"
     )
     llm.llama = LlamaForCausalLM.from_pretrained(
         llama_path, dtype=torch.float32
@@ -406,8 +413,8 @@ def load_models(use_phoneme=False, sample_rate=24000):
     special_token_ids = get_special_token_ids(frontend.tokenize_fn)
     llm.set_runtime_vars(special_token_ids=special_token_ids)
 
-    flow_ckpt = os.path.join("ckpt", "flow", "flow.pt").replace("\\", "/")
-    flow_config = os.path.join("ckpt", "flow", "config.yaml").replace("\\", "/")
+    flow_ckpt = os.path.join(base_ckpt_dir, "flow", "flow.pt")
+    flow_config = os.path.join(base_ckpt_dir, "flow", "config.yaml")
     flow = yaml_util.load_flow_model(
         flow_ckpt, flow_config, DEVICE
     )

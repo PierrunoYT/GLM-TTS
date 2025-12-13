@@ -28,6 +28,9 @@ from glmtts_inference import (
     SpeechTokenizer
 )
 
+# Get the directory of the parent module (GLM-TTS root)
+PARENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 def load_flow_only(frontend_dir, flow_ckpt, flow_config, sample_rate=24000):
     """
     Loads only the Flow model and necessary frontends, skipping the LLM.
@@ -35,7 +38,8 @@ def load_flow_only(frontend_dir, flow_ckpt, flow_config, sample_rate=24000):
     print(f"[INFO] Loading Speech Tokenizer and Frontends (SR={sample_rate}) from {frontend_dir}...")
     
     # Load Speech Tokenizer
-    _model, _feature_extractor = yaml_util.load_speech_tokenizer(os.path.join('ckpt', 'speech_tokenizer'))
+    speech_tokenizer_path = os.path.join(PARENT_DIR, 'ckpt', 'speech_tokenizer')
+    _model, _feature_extractor = yaml_util.load_speech_tokenizer(speech_tokenizer_path)
     speech_tokenizer = SpeechTokenizer(_model, _feature_extractor)
     
     # Load Frontends with specific sample_rate
