@@ -38,7 +38,9 @@ def load_flow_model(flow_ckpt_path, config_path, device):
 
 def load_quantize_encoder(model_path):
     print(f'[load_quantize_encoder] start. {model_path=}')
-    config = WhisperVQConfig.from_pretrained(model_path)
+    # Normalize path to use forward slashes for Hugging Face compatibility
+    normalized_model_path = model_path.replace("\\", "/")
+    config = WhisperVQConfig.from_pretrained(normalized_model_path)
     config.quantize_encoder_only = True
     model = WhisperVQEncoder(config)
     state_dict = {}
@@ -60,6 +62,8 @@ def load_quantize_encoder(model_path):
     return model
 
 def load_speech_tokenizer(model_path):
-    model = load_quantize_encoder(model_path)
-    feature_extractor = WhisperFeatureExtractor.from_pretrained(model_path)
+    # Normalize path to use forward slashes for Hugging Face compatibility
+    normalized_model_path = model_path.replace("\\", "/")
+    model = load_quantize_encoder(normalized_model_path)
+    feature_extractor = WhisperFeatureExtractor.from_pretrained(normalized_model_path)
     return model, feature_extractor
